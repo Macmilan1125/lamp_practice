@@ -20,14 +20,14 @@ if(is_admin($user) === false){
 
 $item_id = get_post('item_id');
 $stock = get_post('stock');
-//issue/#4 $stockの値が０以上のであるか判別、結果が問題なければ下の処理を実行するようにする。（正規表現を利用）
+//issue/#4 実装方針：$stockの値が０以上のであるか判別、結果が問題なければ下の処理を実行するようにする。（正規表現を利用）
+//正規表現による入力値のチェックには　functions.php　の　is_valid_item_stock関数を利用した。
 if(is_valid_item_stock($stock) === true){
   if(update_item_stock($db, $item_id, $stock)){
     set_message('在庫数を変更しました。');
   } else {
     set_error('在庫数の変更に失敗しました。');
   }
-
 }
 
 redirect_to(ADMIN_URL);
