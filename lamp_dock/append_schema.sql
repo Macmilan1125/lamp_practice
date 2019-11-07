@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- ホスト: mysql
--- 生成日時: 2019 年 11 月 07 日 12:17
+-- 生成日時: 2019 年 11 月 07 日 13:45
 -- サーバのバージョン： 5.7.27
 -- PHP のバージョン: 7.2.22
 
@@ -44,6 +44,8 @@ CREATE TABLE `carts` (
 --
 
 CREATE TABLE `details` (
+  `detail_id` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
   `item_id` int(11) NOT NULL,
   `sale_price` int(11) NOT NULL,
   `number` int(11) NOT NULL
@@ -83,6 +85,7 @@ INSERT INTO `items` (`item_id`, `name`, `stock`, `price`, `image`, `status`, `cr
 
 CREATE TABLE `orders` (
   `order_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
   `created` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -123,6 +126,12 @@ ALTER TABLE `carts`
   ADD KEY `user_id` (`user_id`);
 
 --
+-- テーブルのインデックス `details`
+--
+ALTER TABLE `details`
+  ADD PRIMARY KEY (`detail_id`);
+
+--
 -- テーブルのインデックス `items`
 --
 ALTER TABLE `items`
@@ -149,6 +158,12 @@ ALTER TABLE `users`
 --
 ALTER TABLE `carts`
   MODIFY `cart_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
+
+--
+-- テーブルのAUTO_INCREMENT `details`
+--
+ALTER TABLE `details`
+  MODIFY `detail_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- テーブルのAUTO_INCREMENT `items`
@@ -183,5 +198,3 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
-
-
