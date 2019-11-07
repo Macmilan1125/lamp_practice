@@ -157,3 +157,5 @@ function validate_cart_purchase($carts){
   return true;
 }
 
+//ordersテーブルに注文番号を保存する
+function 
