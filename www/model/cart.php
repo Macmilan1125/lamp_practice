@@ -101,35 +101,44 @@ function delete_cart($db, $cart_id){
   return execute_query($db, $sql);
 }
 
+//カート内の商品の購入処理
 function purchase_carts($db, $carts){
+  //購入可能な商品かチェック
   if(validate_cart_purchase($carts) === false){
     return false;
   }
+  //各商品の在庫量更新処理
   foreach($carts as $cart){
+    //DB更新処理に失敗した場合falseが戻ってくる
     if(update_item_stock(
         $db, 
+        //対象ユーザー
         $cart['item_id'], 
+        //更新値は（購入前の在庫量）-（購入数）
         $cart['stock'] - $cart['amount']
       ) === false){
       set_error($cart['name'] . 'の購入に失敗しました。');
+      return false;
     }
   }
-  
-  delete_user_carts($db, $carts[0]['user_id']);
+  //該当ユーザーのカート情報を削除
+  return delete_user_carts($db, $carts[0]['user_id']);
 }
 
+//カートDBから該当ユーザーの情報のみ削除
 function delete_user_carts($db, $user_id){
+  //sql文の作成
   $sql = "
     DELETE FROM
       carts
     WHERE
       user_id = {$user_id}
   ";
-
-  execute_query($db, $sql);
+  //sql文の実行
+  return execute_query($db, $sql);
 }
 
-
+//購入合計額の計算
 function sum_carts($carts){
   $total_price = 0;
   foreach($carts as $cart){
@@ -138,6 +147,8 @@ function sum_carts($carts){
   return $total_price;
 }
 
+
+//各アイテムが購入処理可能か条件判定し論理値を返す
 function validate_cart_purchase($carts){
   if(count($carts) === 0){
     set_error('カートに商品が入っていません。');
@@ -157,5 +168,40 @@ function validate_cart_purchase($carts){
   return true;
 }
 
-//ordersテーブルに注文番号を保存する
-function 
+//購入番号を新規作成
+function insert_order($db, $user_id){
+  $sql = "
+    INSERT INTO
+      orders(
+        user_id,
+        created
+      )
+    VALUES(?,now())
+  ";
+  return execute_query($db, $sql,[$user_id]);
+}
+
+//購入明細を新規作成
+function insert_detail($db, $carts = array()){
+  //最新のオートインクリメントIDの値を取得
+  $order_id = $db->lastInsertId();
+  foreach($carts as $cart){
+    $sql = "
+      INSERT INTO
+        details(
+          order_id,
+          item_id,
+          sale_price,
+          number
+        )
+      VALUES(?, ?, ?, ?)
+    ";
+    $params = array($order_id, $cart['item_id'],$cart['price'], $cart['amount']);
+    $result = execute_query($db, $sql, $params);
+    if($result === false){
+      return false;
+    }
+  }
+  return true;
+}
+
