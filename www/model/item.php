@@ -102,6 +102,7 @@ function update_item_status($db, $item_id, $status){
   return execute_query($db, $sql);
 }
 
+//item_idとstockを引数にsql文の生成。sql実行関数に渡す
 function update_item_stock($db, $item_id, $stock){
   $sql = "
     UPDATE

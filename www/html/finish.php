@@ -16,12 +16,31 @@ $user = get_login_user($db);
 
 $carts = get_user_carts($db, $user['user_id']);
 
-if(purchase_carts($db, $carts) === false){
-  set_error('商品が購入できませんでした。');
+
+
+try {
+  //トランザクション処理開始
+  $db->beginTransaction();
+  //購入処理（在庫数更新とカート情報消去）
+  if(purchase_carts($db, $carts) === false){
+    set_error('商品が購入できませんでした。');
+    throw new PDOException();
+  } 
+  //購入履歴作成
+  if(insert_order($db, $carts[0]['user_id']) === false){
+    set_error('採番エラー');
+    throw new PDOException();
+  } 
+  //購入明細作成
+  if(insert_detail($db, $carts) === false){
+    set_error('明細作成エラー');
+    throw new PDOException();
+  } 
+  $db->commit();
+} catch (PDOException $e) {
+  $db->rollBack();
   redirect_to(CART_URL);
-} 
-
+}
 $total_price = sum_carts($carts);
-
 
 include_once '../view/finish_view.php';
