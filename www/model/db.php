@@ -40,7 +40,9 @@ function fetch_all_query($db, $sql, $params = array()){
 
 function execute_query($db, $sql, $params = array()){
   try{
+    //SQL文を実行する準備
     $statement = $db->prepare($sql);
+    //$params:実行される SQL 文の中のバインドパラメータと同数の要素からなる、値の配列
     return $statement->execute($params);
   }catch(PDOException $e){
     set_error('更新に失敗しました。');

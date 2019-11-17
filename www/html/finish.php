@@ -14,9 +14,10 @@ if(is_logined() === false){
 $db = get_db_connect();
 $user = get_login_user($db);
 
+//ログイン中のユーザーのカート情報を取得
 $carts = get_user_carts($db, $user['user_id']);
 
-
+$total_price = sum_carts($carts);
 
 try {
   //トランザクション処理開始
@@ -27,7 +28,7 @@ try {
     throw new PDOException();
   } 
   //購入履歴作成
-  if(insert_order($db, $carts[0]['user_id']) === false){
+  if(insert_order($db, $carts[0]['user_id'],$total_price) === false){
     set_error('採番エラー');
     throw new PDOException();
   } 
@@ -41,6 +42,6 @@ try {
   $db->rollBack();
   redirect_to(CART_URL);
 }
-$total_price = sum_carts($carts);
+
 
 include_once '../view/finish_view.php';
