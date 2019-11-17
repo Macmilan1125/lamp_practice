@@ -15,4 +15,6 @@ $user = get_login_user($db);
 
 $items = get_open_items($db);
 
+$popular_items = get_popular_items($db);
+
 include_once '../view/index_view.php';
