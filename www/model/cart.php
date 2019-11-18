@@ -169,16 +169,18 @@ function validate_cart_purchase($carts){
 }
 
 //購入番号を新規作成
-function insert_order($db, $user_id){
+function insert_order($db, $user_id, $total_price){
   $sql = "
     INSERT INTO
       orders(
         user_id,
-        created
+        created,
+        total_price
       )
-    VALUES(?,now())
+    VALUES(?,now(),?)
   ";
-  return execute_query($db, $sql,[$user_id]);
+  $insert_order = array($user_id, $total_price);
+  return execute_query($db, $sql,$insert_order);
 }
 
 //購入明細を新規作成
@@ -196,6 +198,7 @@ function insert_detail($db, $carts = array()){
         )
       VALUES(?, ?, ?, ?)
     ";
+    //excute_queryに引数として渡す配列
     $params = array($order_id, $cart['item_id'],$cart['price'], $cart['amount']);
     $result = execute_query($db, $sql, $params);
     if($result === false){
