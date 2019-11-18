@@ -207,3 +207,28 @@ function is_valid_item_status($status){
   }
   return $is_valid;
 }
+
+function get_popular_items($db){
+  //ORDER BY 2でSELECT句の２番を指定する DESC:降順
+  $sql = "
+    SELECT
+      details.item_id,
+      SUM(details.number) AS number,
+      items.stock,
+      items.price,
+      items.name,
+      items.image
+    FROM
+      details
+    JOIN
+      items
+    ON
+      details.item_id = items.item_id
+    GROUP BY
+      details.item_id
+    ORDER BY
+      2 DESC
+    LIMIT 3
+  ";
+  return fetch_all_query($db, $sql);
+}
