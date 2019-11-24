@@ -19,6 +19,8 @@ if(is_logined() === false){
 $db = get_db_connect();
 // 注文番号の取得
 $order = get_post('order_id');
+//POSTから取得したデータなので正しいデータ型（この場合は整数値）であるかチェックし、不正なアクセスをさせないようにする
+
 //該当注文の日時を取得
 $created = get_post('created');
 //該当注文の合計金額を取得

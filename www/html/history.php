@@ -21,6 +21,7 @@ $db = get_db_connect();
 $user = get_login_user($db);
 
 //adminでログインしたときは全購入履歴を取得
+//全ての購入履歴を表示させるのでユーザー名も表示させるとなお良し
 if(is_admin($user) === true){
     $history = get_user_historys($db);
 //ログイン中のユーザーの購入履歴を取得
